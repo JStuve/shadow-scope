@@ -28,7 +28,11 @@ function showSlides() {
   if (slideIndex > slides.length) {
     slideIndex = 1;
   }
-  slides[slideIndex - 1].style.display = 'block';
+
+  if(slides?.length > 0) {
+    slides[slideIndex - 1].style.display = 'block';
+  }
+
   setTimeout(showSlides, 4000); // Change image every 4 seconds
 }
 // User conrols slideshow:
@@ -64,69 +68,117 @@ function showSlides() {
 
 // videos search bar
 var videos = [
-  { name: 'Video001' },
-  { name: 'Video002' },
-  { name: 'Video003' },
-  { name: 'Video004' },
-  { name: 'Video005' },
-  { name: 'Video006' },
-  { name: 'Video007' },
-  { name: 'Video008' },
+  { name: 'Video001', url: '../assets/videos/blobby-with-whiskers-20210121-210334shadow_scope1.mp4' },
+  { name: 'Video002', url: '../assets/videos/blobby-with-whiskers-20210121-210334shadow_scope1.mp4' },
+  { name: 'Video003', url: '../assets/videos/blobby-with-whiskers-20210121-210334shadow_scope1.mp4' },
+  { name: 'Video004', url: '../assets/videos/blobby-with-whiskers-20210121-210334shadow_scope1.mp4' },
+  { name: 'Video005', url: '../assets/videos/blobby-with-whiskers-20210121-210334shadow_scope1.mp4' },
+  { name: 'Video006', url: '../assets/videos/blobby-with-whiskers-20210121-210334shadow_scope1.mp4' },
+  { name: 'Video007', url: '../assets/videos/blobby-with-whiskers-20210121-210334shadow_scope1.mp4' },
+  { name: 'Video008', url: '../assets/videos/blobby-with-whiskers-20210121-210334shadow_scope1.mp4' },
 ];
 var searchInput = document.querySelector('.input');
 var searchButton = document.getElementById('search-button');
 
-searchButton.addEventListener('input', (e) => {
+renderVideos(videos); // Initially load the videos by default
+
+/**
+ * Injects the videos into the grid based on the array of `videosToRender`
+ */
+function renderVideos(videosToRender) {
+  var videoGrid = document.getElementsByClassName('videos-grid')[0]; // There should only be one video grid, consider changing to an id rather than a class.
+
+  if(videoGrid !== null) {
+    videoGrid.innerHTML = "";
+
+    // Loop through each video and add the html element to the grid
+    videosToRender.forEach(video => {
+      videoGrid.innerHTML += `
+        <div class="video-card">
+          <h2>${video.name}</a></h2>
+          <video  controls>
+            <source src="${video.url}" />
+          </video>
+        </div>
+      `;
+    });
+  }
+}
+
+function filterVideosByName(nameValue) {
+  let filteredVideos = videos.filter(v => v.name.toLocaleLowerCase().includes(nameValue));
+
+  renderVideos(filteredVideos);
+}
+
+searchButton.addEventListener('click', (e) => {
   // inside, we will need to achieve a few things:
   // 1. declare and assign the value of the event's target to a variable AKA whatever is typed into the search bar
-  let value = e.target.value;
+  let searchInputValue = searchInput.value;
 
   // 2. check: if input exists and if input is larger than 0
-  if (value && value.trim().length > 0) {
+  if (searchInputValue && searchInputValue.trim().length > 0) {
     // 3. redefine 'value' to exclude white space and change input to all lowercase
-    value = value.trim().toLowerCase();
+    searchInputValue = searchInputValue.trim().toLowerCase();
     // 4. return the results only if the value of the search is included in the video's name
     // we need to write code (a function for filtering through our data to include the search input value)
-    searchButton.addEventListener('input', (e) => {
-      let value = e.target.value;
-
-      if (value && value.trim().length > 0) {
-        value = value.trim().toLowerCase();
-
-        // returning only the results of setList if the value of the search is included in the video's name
-        setList(
-          videos.filter((video) => {
-            return video.name.includes(value);
-          })
-        );
-      }
-    });
+    filterVideosByName(searchInputValue);
+    
   } else {
     // 5. return nothing
     // input is invalid -- show an error message or show no results
   }
 });
 
+
+searchInput.addEventListener('keyup', (e) => {
+
+  // Enter key is hit, apply filter
+  if(e.key == 'Enter' || e.keyCode == 13) {
+    // TODO: This is duplicate code as in the searchButton click event listener above.
+    // I added this to show how to trigger the same action from two different events.
+
+
+    // inside, we will need to achieve a few things:
+    // 1. declare and assign the value of the event's target to a variable AKA whatever is typed into the search bar
+    let searchInputValue = searchInput.value;
+
+    // 2. check: if input exists and if input is larger than 0
+    if (searchInputValue && searchInputValue.trim().length > 0) {
+      // 3. redefine 'value' to exclude white space and change input to all lowercase
+      searchInputValue = searchInputValue.trim().toLowerCase();
+      // 4. return the results only if the value of the search is included in the video's name
+      // we need to write code (a function for filtering through our data to include the search input value)
+      filterVideosByName(searchInputValue);
+      
+    } else {
+      // 5. return nothing
+      // input is invalid -- show an error message or show no results
+    }
+  }
+})
+
+
 // creating and declaring a function called "setList"
 // setList takes in a param of "results"
-function setList(results) {
-  for (const video of results) {
-    // creating a li element for each result item
-    const resultItem = document.createElement('li');
+// function setList(results) {
+//   for (const video of results) {
+//     // creating a li element for each result item
+//     const resultItem = document.createElement('li');
 
-    // adding a class to each item of the results
-    resultItem.classList.add('result-item');
+//     // adding a class to each item of the results
+//     resultItem.classList.add('result-item');
 
-    // grabbing the name of the current point of the loop and adding the name as the list item's text
-    const text = document.createTextNode(video.name);
+//     // grabbing the name of the current point of the loop and adding the name as the list item's text
+//     const text = document.createTextNode(video.name);
 
-    // appending the text to the result item
-    resultItem.appendChild(text);
+//     // appending the text to the result item
+//     resultItem.appendChild(text);
 
-    // appending the result item to the list
-    list.appendChild(resultItem);
-  }
-}
+//     // appending the result item to the list
+//     list.appendChild(resultItem);
+//   }
+// }
 
 // function videosSearchFunction() {
 //   if (videos.indexOf(Number(myInputs.value)) == -1) {

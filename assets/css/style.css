@@ -750,6 +750,11 @@ nav {
   width: 100%;
 }
 
+.search-bar {
+  display: flex;
+  width: 100%;
+}
+
 .searchIcon {
   padding: 1rem;
   width: 5rem;
